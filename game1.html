@@ -1,0 +1,2667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>益智游戏合集 - 手机优化版</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 15px;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        /* 主菜单样式 */
+        #main-menu {
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #ffcc00, #ff9900);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .game-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        
+        .game-card:active {
+            transform: translateY(-5px) scale(1.02);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #ffcc00, #ff9900);
+        }
+        
+        .game-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ffcc00;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
+        
+        .game-title {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        
+        .game-description {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        
+        .game-difficulty {
+            display: flex;
+            justify-content: center;
+            margin-top: 8px;
+        }
+        
+        .difficulty-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin: 0 2px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .difficulty-dot.active {
+            background: #ffcc00;
+        }
+        
+        /* 游戏屏幕样式 */
+        .game-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            padding: 15px;
+            transform: translateX(100%);
+            transition: transform 0.5s ease;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .game-screen.active {
+            transform: translateX(0);
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            touch-action: manipulation;
+            min-height: 44px; /* 确保触摸目标足够大 */
+        }
+        
+        .back-button:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-3px);
+        }
+        
+        .game-content {
+            text-align: center;
+            padding: 15px;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        .game-header {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 游戏介绍样式 */
+        .game-intro {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: left;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .intro-title {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: #ffcc00;
+            text-align: center;
+        }
+        
+        .intro-content {
+            margin-bottom: 15px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        
+        .intro-features {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .feature i {
+            font-size: 1.7rem;
+            margin-bottom: 8px;
+            color: #ffcc00;
+        }
+        
+        /* 记忆迷宫样式 */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px auto;
+            max-width: 100%;
+        }
+        
+        .memory-card {
+            aspect-ratio: 1;
+            background: #3498db;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            touch-action: manipulation;
+            min-height: 60px;
+        }
+        
+        .memory-card::before {
+            content: '?';
+            position: absolute;
+            font-size: 1.8rem;
+            color: white;
+        }
+        
+        .memory-card.flipped {
+            background: #2ecc71;
+            transform: rotateY(180deg);
+        }
+        
+        .memory-card.flipped::before {
+            display: none;
+        }
+        
+        .memory-card.wrong {
+            background: #e74c3c;
+            animation: shake 0.5s ease;
+        }
+        
+        .memory-card.matched {
+            background: #2ecc71;
+            transform: rotateY(180deg);
+            animation: pulse 0.5s ease;
+        }
+        
+        /* 人格测试样式 */
+        .question-screen {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: left;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .question-number {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: #ffcc00;
+        }
+        
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            border: 2px solid transparent;
+            touch-action: manipulation;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .option.selected {
+            background: rgba(52, 152, 219, 0.3);
+            border: 2px solid #3498db;
+        }
+        
+        .personality-result {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 15px;
+            text-align: left;
+            display: none;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 时间循环样式 */
+        .puzzle-area {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .puzzle-item {
+            margin: 12px 0;
+            font-size: 1.1rem;
+        }
+        
+        .loop-counter {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            color: #ffcc00;
+        }
+        
+        /* 选择困境样式 */
+        .dilemma-screen {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: left;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .scenario-title {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: #ffcc00;
+        }
+        
+        .scenario-text {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        
+        .moral-choices {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        
+        .moral-choice {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            border: 2px solid transparent;
+            touch-action: manipulation;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .moral-choice:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .consequence {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(231, 76, 60, 0.3);
+            display: none;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(231, 76, 60, 0.5);
+        }
+        
+        /* 进度条样式 */
+        .progress-container {
+            margin: 15px 0;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #2ecc71, #3498db);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 8px;
+        }
+        
+        /* 统计信息样式 */
+        .game-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .stat-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 5px;
+            color: #ffcc00;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+        }
+        
+        .timer {
+            font-size: 1.2rem;
+            margin: 15px 0;
+            color: #ffcc00;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+        }
+        
+        /* 按钮样式 */
+        .game-button {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 8px 4px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            touch-action: manipulation;
+            min-height: 44px; /* 确保触摸目标足够大 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .game-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: 0.5s;
+        }
+        
+        .game-button:active {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .game-button:active::before {
+            left: 100%;
+        }
+        
+        .game-button.secondary {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+        }
+        
+        .game-button.secondary:active {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+        }
+        
+        .game-button.danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        /* 动画效果 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+            20%, 40%, 60%, 80% { transform: translateX(3px); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 1s infinite;
+        }
+        
+        /* 响应式设计 */
+        @media (min-width: 480px) {
+            .games-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .game-stats {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .memory-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .intro-features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .button-group {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .games-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .memory-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+            }
+            
+            .intro-features {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 粒子背景效果 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        /* 新添加的样式 */
+        .result-screen {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .result-title {
+            font-size: 1.7rem;
+            margin-bottom: 15px;
+            color: #ffcc00;
+        }
+        
+        .result-description {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            text-align: left;
+        }
+        
+        .trait-list {
+            text-align: left;
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        
+        .trait-list li {
+            margin-bottom: 8px;
+        }
+        
+        .transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .transition-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .transition-text {
+            font-size: 1.7rem;
+            color: white;
+            text-align: center;
+        }
+        
+        .achievement-badge {
+            background: linear-gradient(135deg, #ffcc00, #ff9900);
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 50px;
+            margin: 8px;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 移动设备特定优化 */
+        .touch-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 5;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: pulse 2s infinite;
+        }
+        
+        /* 输入框优化 */
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: none;
+            font-size: 1rem;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        
+        /* 添加底部安全区域 */
+        .safe-area {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        /* 新增：排行榜样式 */
+        .leaderboard {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: left;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .leaderboard-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #ffcc00;
+            text-align: center;
+        }
+        
+        .leaderboard-list {
+            list-style: none;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+        
+        .leaderboard-rank {
+            font-weight: bold;
+            color: #ffcc00;
+        }
+        
+        /* 新增：成就系统样式 */
+        .achievements-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .achievement-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .achievement-icon {
+            font-size: 1.8rem;
+            color: #ffcc00;
+        }
+        
+        .achievement-info {
+            flex: 1;
+        }
+        
+        .achievement-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .achievement-description {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .achievement-progress {
+            height: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        
+        .achievement-progress-bar {
+            height: 100%;
+            background: #ffcc00;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+        
+        /* 新增：难度选择样式 */
+        .difficulty-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .difficulty-option {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .difficulty-option.active {
+            background: rgba(52, 152, 219, 0.3);
+            border: 1px solid #3498db;
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- 过渡动画层 -->
+    <div class="transition-overlay" id="transition-overlay">
+        <div class="transition-text" id="transition-text">下一题</div>
+    </div>
+    
+    <!-- 移动设备提示 -->
+    <div class="touch-hint" id="touch-hint">点击卡片开始游戏</div>
+    
+    <div class="container safe-area">
+        <!-- 主菜单 -->
+        <div id="main-menu">
+            <header>
+                <h1>益智游戏合集</h1>
+                <p class="subtitle">挑战你的记忆力、逻辑思维和道德判断</p>
+                <p>准备好接受挑战了吗？选择一款游戏开始吧！</p>
+            </header>
+            
+            <div class="games-grid">
+                <!-- 记忆迷宫 -->
+                <div class="game-card" onclick="showGame('memory')">
+                    <div class="game-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="game-title">记忆迷宫</h3>
+                    <p class="game-description">测试你的记忆力，挑战不同难度等级！记住卡片的位置和顺序，提高你的记忆能力。</p>
+                    <div class="game-difficulty">
+                        <div class="difficulty-dot active"></div>
+                        <div class="difficulty-dot active"></div>
+                        <div class="difficulty-dot"></div>
+                        <div class="difficulty-dot"></div>
+                        <div class="difficulty-dot"></div>
+                    </div>
+                </div>
+                
+                <!-- 人格测试 -->
+                <div class="game-card" onclick="showGame('personality')">
+                    <div class="game-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 class="game-title">人格测试</h3>
+                    <p class="game-description">深入了解你的个性！回答一系列问题，基于心理学原理分析你的性格特征。</p>
+                    <div class="game-difficulty">
+                        <div class="difficulty-dot active"></div>
+                        <div class="difficulty-dot"></div>
+                        <div class="difficulty-dot"></div>
+                        <div class="difficulty-dot"></div>
+                        <div class="difficulty-dot"></div>
+                    </div>
+                </div>
+                
+                <!-- 时间循环 -->
+                <div class="game-card" onclick="showGame('timeloop')">
+                    <div class="game-icon">
+                        <i class="fas fa-redo"></i>
+                    </div>
+                    <h3 class="game-title">时间循环</h3>
+                    <p class="game-description">逃离这个无限循环的谜题空间！解决谜题打破循环，挑战你的逻辑思维能力。</p>
+                    <div class="game-difficulty">
+                        <div class="difficulty-dot active"></div>
+                        <div class="difficulty-dot active"></div>
+                        <div class="difficulty-dot active"></div>
+                        <div class="difficulty-dot"></div>
+                        <div class="difficulty-dot"></div>
+                    </div>
+                </div>
+                
+                <!-- 选择困境 -->
+                <div class="game-card" onclick="showGame('dilemma')">
+                    <div class="game-icon">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <h3 class="game-title">选择困境</h3>
+                    <p class="game-description">面对道德抉择，探索不同的道德立场！在复杂的道德困境中做出选择，看看你的道德分数。</p>
+                    <div class="game-difficulty">
+                        <div class="difficulty-dot active"></div>
+                        <div class="difficulty-dot active"></div>
+                        <div class="difficulty-dot"></div>
+                        <div class="difficulty-dot"></div>
+                        <div class="difficulty-dot"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 新增：成就概览 -->
+            <div class="leaderboard">
+                <h3 class="leaderboard-title">我的成就</h3>
+                <div class="achievements-container" id="achievements-preview">
+                    <!-- 成就将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- 记忆迷宫游戏屏幕 -->
+        <div id="memory-screen" class="game-screen">
+            <button class="back-button" onclick="showMainMenu()">
+                <i class="fas fa-arrow-left"></i> 返回主菜单
+            </button>
+            
+            <div class="game-content">
+                <div class="game-header">
+                    <h2>记忆迷宫</h2>
+                    <p>记住卡片的位置和顺序，然后按正确顺序点击它们</p>
+                </div>
+                
+                <div class="game-intro" id="memory-intro">
+                    <h3 class="intro-title">游戏介绍</h3>
+                    <div class="intro-content">
+                        <p>在这个游戏中，你需要记住卡片的位置和顺序。游戏会先展示一系列卡片的顺序，然后你需要按照相同的顺序点击这些卡片。</p>
+                        <p>随着等级提高，挑战会变得更加困难：</p>
+                        <ul>
+                            <li>序列长度会逐渐增加</li>
+                            <li>卡片数量会随着难度增加</li>
+                            <li>记忆时间会缩短</li>
+                            <li>高级模式会有干扰卡片</li>
+                        </ul>
+                        <p>你能达到多少级？测试你的记忆力极限！</p>
+                    </div>
+                    
+                    <div class="intro-features">
+                        <div class="feature">
+                            <i class="fas fa-brain"></i>
+                            <h4>记忆力挑战</h4>
+                            <p>测试你的短期记忆能力</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-clock"></i>
+                            <h4>时间限制</h4>
+                            <p>在限定时间内完成任务</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-trophy"></i>
+                            <h4>等级系统</h4>
+                            <p>随着等级提高难度增加</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-layer-group"></i>
+                            <h4>多种难度</h4>
+                            <p>提供不同难度级别</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 新增：难度选择 -->
+                    <div class="difficulty-selector">
+                        <div class="difficulty-option active" data-difficulty="easy" onclick="selectDifficulty('memory', 'easy')">简单</div>
+                        <div class="difficulty-option" data-difficulty="medium" onclick="selectDifficulty('memory', 'medium')">中等</div>
+                        <div class="difficulty-option" data-difficulty="hard" onclick="selectDifficulty('memory', 'hard')">困难</div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="game-button" onclick="startMemoryGame()">开始游戏</button>
+                        <button class="game-button secondary" onclick="showMemoryInstructions()">游戏说明</button>
+                    </div>
+                </div>
+                
+                <div class="game-play" id="memory-play" style="display: none;">
+                    <div class="game-stats">
+                        <div class="stat-box">
+                            <div class="stat-label">等级</div>
+                            <div class="stat-value" id="memory-level">1</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">分数</div>
+                            <div class="stat-value" id="memory-score">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">生命</div>
+                            <div class="stat-value" id="memory-lives">3</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">连击</div>
+                            <div class="stat-value" id="memory-combo">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>进度</span>
+                            <span id="memory-progress-text">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="memory-progress"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="memory-grid" id="memory-grid">
+                        <!-- 卡片将通过JavaScript动态生成 -->
+                    </div>
+                    
+                    <div class="timer" id="memory-timer">时间: 60秒</div>
+                    
+                    <div class="button-group">
+                        <button class="game-button" id="memory-start">开始回合</button>
+                        <button class="game-button secondary" id="memory-reset">重置游戏</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 人格测试游戏屏幕 -->
+        <div id="personality-screen" class="game-screen">
+            <button class="back-button" onclick="showMainMenu()">
+                <i class="fas fa-arrow-left"></i> 返回主菜单
+            </button>
+            
+            <div class="game-content">
+                <div class="game-header">
+                    <h2>人格测试</h2>
+                    <p>回答这些问题来了解你的真实个性</p>
+                </div>
+                
+                <div class="game-intro" id="personality-intro">
+                    <h3 class="intro-title">人格测试介绍</h3>
+                    <div class="intro-content">
+                        <p>这个测试基于心理学原理，通过一系列问题来分析你的性格特征。测试结果将根据你的选择生成，而不是随机分配。</p>
+                        <ul>
+                            <li>基于心理学模型分析你的性格</li>
+                            <li>提供详细的性格特征描述</li>
+                            <li>分析你的优势和潜在发展领域</li>
+                            <li>提供个性化的建议</li>
+                        </ul>
+                        <p>准备好了解真实的自己了吗？</p>
+                    </div>
+                    
+                    <div class="intro-features">
+                        <div class="feature">
+                            <i class="fas fa-question-circle"></i>
+                            <h4>深度问题</h4>
+                            <p>涵盖多个性格维度</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-chart-pie"></i>
+                            <h4>详细分析</h4>
+                            <p>提供全面的性格分析</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-user-secret"></i>
+                            <h4>隐藏特质</h4>
+                            <p>揭示你可能不知道的性格侧面</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-lightbulb"></i>
+                            <h4>个性化建议</h4>
+                            <p>根据结果提供发展建议</p>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="game-button" onclick="startPersonalityTest()">开始测试</button>
+                        <button class="game-button secondary" onclick="showPersonalityInstructions()">测试说明</button>
+                    </div>
+                </div>
+                
+                <div class="game-play" id="personality-play" style="display: none;">
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>测试进度</span>
+                            <span id="personality-progress-text">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="personality-progress"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="personality-questions">
+                        <!-- 问题将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                
+                <div class="result-screen" id="personality-result" style="display: none;">
+                    <!-- 结果将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- 时间循环游戏屏幕 -->
+        <div id="timeloop-screen" class="game-screen">
+            <button class="back-button" onclick="showMainMenu()">
+                <i class="fas fa-arrow-left"></i> 返回主菜单
+            </button>
+            
+            <div class="game-content">
+                <div class="game-header">
+                    <h2>时间循环</h2>
+                    <p>你被困在时间循环中，找到逃脱的方法！</p>
+                </div>
+                
+                <div class="game-intro" id="timeloop-intro">
+                    <h3 class="intro-title">时间循环介绍</h3>
+                    <div class="intro-content">
+                        <p>你被困在一个神秘的时间循环中，每次失败都会重置循环。要逃脱，你需要解决一系列谜题：</p>
+                        <ul>
+                            <li>每个谜题都有时间限制</li>
+                            <li>使用提示会消耗提示次数</li>
+                            <li>谜题难度会随着循环次数增加</li>
+                            <li>某些谜题需要逻辑推理</li>
+                            <li>注意观察细节，答案可能就在你眼前</li>
+                        </ul>
+                        <p>你能在时间耗尽前找到逃脱的方法吗？</p>
+                    </div>
+                    
+                    <div class="intro-features">
+                        <div class="feature">
+                            <i class="fas fa-puzzle-piece"></i>
+                            <h4>谜题挑战</h4>
+                            <p>解决各种类型的谜题</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-hourglass-half"></i>
+                            <h4>时间压力</h4>
+                            <p>在限定时间内解决问题</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-redo"></i>
+                            <h4>循环机制</h4>
+                            <p>失败会重置循环</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-lightbulb"></i>
+                            <h4>提示系统</h4>
+                            <p>有限的提示次数</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 新增：难度选择 -->
+                    <div class="difficulty-selector">
+                        <div class="difficulty-option active" data-difficulty="easy" onclick="selectDifficulty('timeloop', 'easy')">简单</div>
+                        <div class="difficulty-option" data-difficulty="medium" onclick="selectDifficulty('timeloop', 'medium')">中等</div>
+                        <div class="difficulty-option" data-difficulty="hard" onclick="selectDifficulty('timeloop', 'hard')">困难</div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="game-button" onclick="startTimeLoop()">开始循环</button>
+                        <button class="game-button secondary" onclick="showTimeloopInstructions()">游戏说明</button>
+                    </div>
+                </div>
+                
+                <div class="game-play" id="timeloop-play" style="display: none;">
+                    <div class="game-stats">
+                        <div class="stat-box">
+                            <div class="stat-label">循环次数</div>
+                            <div class="stat-value" id="loop-count">1</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">谜题进度</div>
+                            <div class="stat-value" id="puzzle-progress">0/5</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">提示次数</div>
+                            <div class="stat-value" id="hint-count">3</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">正确率</div>
+                            <div class="stat-value" id="accuracy-rate">0%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="puzzle-area" id="puzzle-area">
+                        <div class="puzzle-item" id="puzzle-question">点击下面的按钮开始循环</div>
+                        <input type="text" id="puzzle-answer" placeholder="输入答案..." style="display: none; margin: 12px 0; padding: 12px 15px; border-radius: 10px; border: none; width: 100%; font-size: 1rem;">
+                        <div class="button-group">
+                            <button class="game-button" id="timeloop-start">开始谜题</button>
+                            <button class="game-button secondary" id="timeloop-hint" style="display: none;">获取提示 (剩余: <span id="hint-remaining">3</span>)</button>
+                            <button class="game-button secondary" id="timeloop-submit" style="display: none;">提交答案</button>
+                        </div>
+                    </div>
+                    
+                    <div class="timer" id="timeloop-timer">时间: 120秒</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 选择困境游戏屏幕 -->
+        <div id="dilemma-screen" class="game-screen">
+            <button class="back-button" onclick="showMainMenu()">
+                <i class="fas fa-arrow-left"></i> 返回主菜单
+            </button>
+            
+            <div class="game-content">
+                <div class="game-header">
+                    <h2>选择困境</h2>
+                    <p>面对道德困境，做出你的选择</p>
+                </div>
+                
+                <div class="game-intro" id="dilemma-intro">
+                    <h3 class="intro-title">选择困境介绍</h3>
+                    <div class="intro-content">
+                        <p>在这个游戏中，你将面对一系列复杂的道德困境。每个选择都会影响你的道德分数和影响点数：</p>
+                        <ul>
+                            <li>每个困境都有多个选择，但没有完美答案</li>
+                            <li>你的选择会影响后续情境</li>
+                            <li>道德分数反映你的道德立场</li>
+                            <li>影响点数显示你的选择对他人的影响</li>
+                            <li>最终会根据你的选择给出评价</li>
+                        </ul>
+                        <p>准备好面对这些艰难的道德抉择了吗？</p>
+                    </div>
+                    
+                    <div class="intro-features">
+                        <div class="feature">
+                            <i class="fas fa-balance-scale"></i>
+                            <h4>道德困境</h4>
+                            <p>面对复杂的道德选择</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-chart-line"></i>
+                            <h4>分数系统</h4>
+                            <p>道德分数和影响点数</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h4>后果系统</h4>
+                            <p>每个选择都有后果</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-random"></i>
+                            <h4>分支剧情</h4>
+                            <p>选择影响后续发展</p>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="game-button" onclick="startDilemma()">开始困境</button>
+                        <button class="game-button secondary" onclick="showDilemmaInstructions()">游戏说明</button>
+                    </div>
+                </div>
+                
+                <div class="game-play" id="dilemma-play" style="display: none;">
+                    <div class="game-stats">
+                        <div class="stat-box">
+                            <div class="stat-label">道德分数</div>
+                            <div class="stat-value" id="moral-score">50</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">场景进度</div>
+                            <div class="stat-value" id="scenario-progress">1/7</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">影响点数</div>
+                            <div class="stat-value" id="influence-points">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">决策时间</div>
+                            <div class="stat-value" id="decision-time">0s</div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>道德进度</span>
+                            <span id="moral-progress-text">50%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="moral-progress"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="dilemma-scenario">
+                        <!-- 困境场景将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                
+                <div class="result-screen" id="dilemma-result" style="display: none;">
+                    <!-- 结果将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化粒子背景
+        function initParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 20; // 减少粒子数量以提高性能
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = Math.random() * 8 + 4; // 减小粒子大小
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                particle.style.animationDelay = `${Math.random() * 15}s`;
+                particle.style.animationDuration = `${15 + Math.random() * 10}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // 显示过渡动画
+        function showTransition(text, callback, duration = 1000) {
+            const overlay = document.getElementById('transition-overlay');
+            const transitionText = document.getElementById('transition-text');
+            
+            transitionText.textContent = text;
+            overlay.classList.add('active');
+            
+            setTimeout(() => {
+                overlay.classList.remove('active');
+                if (callback) setTimeout(callback, 500);
+            }, duration);
+        }
+        
+        // 显示主菜单
+        function showMainMenu() {
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById('main-menu').style.display = 'block';
+            
+            // 重置所有游戏的介绍界面
+            document.querySelectorAll('.game-intro').forEach(intro => {
+                intro.style.display = 'block';
+            });
+            document.querySelectorAll('.game-play').forEach(play => {
+                play.style.display = 'none';
+            });
+            document.querySelectorAll('.result-screen').forEach(result => {
+                result.style.display = 'none';
+            });
+            
+            // 隐藏触摸提示
+            document.getElementById('touch-hint').style.display = 'block';
+            
+            // 更新成就预览
+            updateAchievementsPreview();
+        }
+        
+        // 显示特定游戏
+        function showGame(gameId) {
+            document.getElementById('main-menu').style.display = 'none';
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(`${gameId}-screen`).classList.add('active');
+            
+            // 隐藏触摸提示
+            document.getElementById('touch-hint').style.display = 'none';
+            
+            // 初始化游戏
+            if (gameId === 'memory') initMemoryGame();
+            else if (gameId === 'personality') initPersonalityTest();
+            else if (gameId === 'timeloop') initTimeLoop();
+            else if (gameId === 'dilemma') initDilemma();
+        }
+        
+        // 选择难度
+        function selectDifficulty(game, difficulty) {
+            // 移除所有活跃状态
+            document.querySelectorAll(`#${game}-intro .difficulty-option`).forEach(option => {
+                option.classList.remove('active');
+            });
+            
+            // 设置当前选项为活跃状态
+            document.querySelector(`#${game}-intro .difficulty-option[data-difficulty="${difficulty}"]`).classList.add('active');
+            
+            // 存储难度选择
+            localStorage.setItem(`${game}-difficulty`, difficulty);
+        }
+        
+        // 获取存储的难度
+        function getDifficulty(game) {
+            return localStorage.getItem(`${game}-difficulty`) || 'easy';
+        }
+        
+        // 显示游戏说明
+        function showMemoryInstructions() {
+            alert("记忆迷宫游戏说明：\n\n1. 游戏会展示一系列卡片的顺序\n2. 记住卡片的位置和顺序\n3. 按照相同的顺序点击卡片\n4. 每关通过后，序列会变得更长\n5. 你有3条生命，错误会失去生命\n6. 时间限制为60秒\n7. 选择不同难度会影响卡片数量和序列长度");
+        }
+        
+        function showPersonalityInstructions() {
+            alert("人格测试说明：\n\n1. 回答一系列关于你性格的问题\n2. 每个问题选择最符合你的选项\n3. 测试结果基于你的选择生成\n4. 结果将提供详细的性格分析\n5. 根据结果提供个性化建议");
+        }
+        
+        function showTimeloopInstructions() {
+            alert("时间循环游戏说明：\n\n1. 你被困在时间循环中\n2. 解决谜题来逃脱循环\n3. 每个谜题有时间限制\n4. 你有3次提示机会\n5. 失败会重置循环\n6. 选择不同难度会影响谜题难度和数量");
+        }
+        
+        function showDilemmaInstructions() {
+            alert("选择困境游戏说明：\n\n1. 面对一系列道德困境\n2. 每个困境有多个选择\n3. 选择会影响道德分数和影响点数\n4. 没有完美的选择\n5. 每个选择都有后果\n6. 游戏包含10个不同的困境\n7. 最终会根据你的选择给出评价");
+        }
+        
+        // 开始游戏函数
+        function startMemoryGame() {
+            document.getElementById('memory-intro').style.display = 'none';
+            document.getElementById('memory-play').style.display = 'block';
+        }
+        
+        function startPersonalityTest() {
+            document.getElementById('personality-intro').style.display = 'none';
+            document.getElementById('personality-play').style.display = 'block';
+        }
+        
+        function startTimeLoop() {
+            document.getElementById('timeloop-intro').style.display = 'none';
+            document.getElementById('timeloop-play').style.display = 'block';
+        }
+        
+        function startDilemma() {
+            document.getElementById('dilemma-intro').style.display = 'none';
+            document.getElementById('dilemma-play').style.display = 'block';
+        }
+        
+        // 初始化粒子背景
+        initParticles();
+        
+        // ========== 记忆迷宫游戏 ==========
+        function initMemoryGame() {
+            const memoryGrid = document.getElementById('memory-grid');
+            const startBtn = document.getElementById('memory-start');
+            const resetBtn = document.getElementById('memory-reset');
+            const levelDisplay = document.getElementById('memory-level');
+            const scoreDisplay = document.getElementById('memory-score');
+            const livesDisplay = document.getElementById('memory-lives');
+            const comboDisplay = document.getElementById('memory-combo');
+            const progressBar = document.getElementById('memory-progress');
+            const progressText = document.getElementById('memory-progress-text');
+            const timerDisplay = document.getElementById('memory-timer');
+            
+            let level = 1;
+            let score = 0;
+            let lives = 3;
+            let combo = 0;
+            let sequence = [];
+            let playerSequence = [];
+            let isPlaying = false;
+            let isShowingSequence = false;
+            let gameTimer;
+            let timeLeft = 60;
+            let difficulty = getDifficulty('memory');
+            
+            // 根据难度设置卡片数量
+            let cardCount = 9; // 默认简单难度
+            if (difficulty === 'medium') cardCount = 12;
+            if (difficulty === 'hard') cardCount = 16;
+            
+            // 创建卡片
+            memoryGrid.innerHTML = '';
+            memoryGrid.style.gridTemplateColumns = `repeat(${Math.sqrt(cardCount)}, 1fr)`;
+            
+            const symbols = ['♠', '♥', '♦', '♣', '★', '☀', '☁', '♫', '☂', '♞', '☯', '⚡', '❤', '✰', '♛', '♨'];
+            
+            for (let i = 0; i < cardCount; i++) {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.textContent = symbols[i % symbols.length];
+                card.addEventListener('click', () => handleCardClick(i));
+                memoryGrid.appendChild(card);
+            }
+            
+            // 开始游戏
+            startBtn.addEventListener('click', startGame);
+            
+            // 重置游戏
+            resetBtn.addEventListener('click', resetGame);
+            
+            function startGame() {
+                if (isPlaying) return;
+                isPlaying = true;
+                level = 1;
+                score = 0;
+                lives = 3;
+                combo = 0;
+                timeLeft = 60;
+                updateDisplay();
+                startTimer();
+                generateSequence();
+                showSequence();
+            }
+            
+            function resetGame() {
+                isPlaying = false;
+                clearInterval(gameTimer);
+                level = 1;
+                score = 0;
+                lives = 3;
+                combo = 0;
+                timeLeft = 60;
+                sequence = [];
+                playerSequence = [];
+                updateDisplay();
+                resetCards();
+                timerDisplay.textContent = `时间: ${timeLeft}秒`;
+            }
+            
+            function startTimer() {
+                clearInterval(gameTimer);
+                gameTimer = setInterval(() => {
+                    timeLeft--;
+                    timerDisplay.textContent = `时间: ${timeLeft}秒`;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(gameTimer);
+                        endGame();
+                    }
+                }, 1000);
+            }
+            
+            function generateSequence() {
+                sequence = [];
+                let sequenceLength;
+                
+                // 根据难度和等级设置序列长度
+                if (difficulty === 'easy') {
+                    sequenceLength = Math.min(level + 1, cardCount);
+                } else if (difficulty === 'medium') {
+                    sequenceLength = Math.min(level + 2, cardCount);
+                } else { // hard
+                    sequenceLength = Math.min(level + 3, cardCount);
+                }
+                
+                for (let i = 0; i < sequenceLength; i++) {
+                    let randomIndex;
+                    do {
+                        randomIndex = Math.floor(Math.random() * cardCount);
+                    } while (sequence.includes(randomIndex)); // 确保不重复
+                    
+                    sequence.push(randomIndex);
+                }
+            }
+            
+            function showSequence() {
+                isShowingSequence = true;
+                let i = 0;
+                
+                // 根据难度设置显示时间
+                let displayTime = 1000;
+                if (difficulty === 'medium') displayTime = 800;
+                if (difficulty === 'hard') displayTime = 600;
+                
+                const showNext = () => {
+                    if (i >= sequence.length) {
+                        isShowingSequence = false;
+                        resetCards();
+                        return;
+                    }
+                    
+                    const cardIndex = sequence[i];
+                    const card = memoryGrid.children[cardIndex];
+                    
+                    card.classList.add('flipped');
+                    setTimeout(() => {
+                        card.classList.remove('flipped');
+                        setTimeout(showNext, 300);
+                    }, displayTime);
+                    
+                    i++;
+                };
+                
+                showNext();
+            }
+            
+            function handleCardClick(index) {
+                if (!isPlaying || isShowingSequence) return;
+                
+                playerSequence.push(index);
+                const card = memoryGrid.children[index];
+                card.classList.add('flipped');
+                
+                // 检查是否正确
+                const currentStep = playerSequence.length - 1;
+                if (playerSequence[currentStep] !== sequence[currentStep]) {
+                    // 错误
+                    card.classList.add('wrong');
+                    setTimeout(() => {
+                        card.classList.remove('wrong', 'flipped');
+                        playerSequence = [];
+                        lives--;
+                        combo = 0;
+                        updateDisplay();
+                        
+                        if (lives <= 0) {
+                            endGame();
+                        } else {
+                            alert(`错误！你还有 ${lives} 条生命`);
+                            showSequence();
+                        }
+                    }, 1000);
+                    return;
+                }
+                
+                // 检查是否完成序列
+                if (playerSequence.length === sequence.length) {
+                    combo++;
+                    score += level * 10 * combo;
+                    level++;
+                    updateDisplay();
+                    
+                    // 解锁成就
+                    if (level >= 5) unlockAchievement('memory-master');
+                    if (combo >= 5) unlockAchievement('combo-king');
+                    
+                    alert(`太棒了！连击x${combo}！进入下一关！`);
+                    
+                    playerSequence = [];
+                    generateSequence();
+                    setTimeout(showSequence, 1000);
+                }
+            }
+            
+            function resetCards() {
+                for (let card of memoryGrid.children) {
+                    card.classList.remove('flipped', 'wrong');
+                }
+            }
+            
+            function updateDisplay() {
+                levelDisplay.textContent = level;
+                scoreDisplay.textContent = score;
+                livesDisplay.textContent = lives;
+                comboDisplay.textContent = combo;
+                progressBar.style.width = `${(level / 15) * 100}%`;
+                progressText.textContent = `${Math.min((level / 15) * 100, 100)}%`;
+            }
+            
+            function endGame() {
+                isPlaying = false;
+                clearInterval(gameTimer);
+                
+                // 更新最高分
+                updateHighScore('memory', score);
+                
+                // 解锁成就
+                if (score >= 500) unlockAchievement('memory-pro');
+                if (level >= 10) unlockAchievement('memory-expert');
+                
+                alert(`游戏结束！你的最终分数: ${score}`);
+                resetGame();
+            }
+        }
+        
+        // ========== 人格测试游戏 ==========
+        function initPersonalityTest() {
+            const questionsContainer = document.getElementById('personality-questions');
+            const resultContainer = document.getElementById('personality-result');
+            const progressBar = document.getElementById('personality-progress');
+            const progressText = document.getElementById('personality-progress-text');
+            
+            const questions = [
+                {
+                    question: "当你进入一个陌生的社交场合时，你通常会：",
+                    options: [
+                        "观察周围环境，寻找熟悉的面孔",
+                        "直接走向人群中心，主动介绍自己",
+                        "找一个安静的角落，等待别人来搭话",
+                        "感到紧张，希望尽快离开"
+                    ],
+                    traits: ["内向", "外向", "内向", "焦虑"]
+                },
+                {
+                    question: "面对一个复杂的项目，你的第一反应是：",
+                    options: [
+                        "制定详细的计划和时间表",
+                        "立即开始动手尝试",
+                        "寻求他人的帮助和建议",
+                        "感到不知所措，拖延开始"
+                    ],
+                    traits: ["有条理", "行动派", "协作型", "犹豫不决"]
+                },
+                {
+                    question: "当你和朋友意见不合时，你通常会：",
+                    options: [
+                        "坚持自己的观点并试图说服对方",
+                        "寻求折中的解决方案",
+                        "为了避免冲突而让步",
+                        "情绪激动，容易发生争吵"
+                    ],
+                    traits: ["坚定", "妥协", "顺从", "情绪化"]
+                },
+                {
+                    question: "对于未来的规划，你更倾向于：",
+                    options: [
+                        "有明确的长期目标和计划",
+                        "随遇而安，享受当下的生活",
+                        "担心可能出现的困难和挑战",
+                        "充满期待，相信一切都会好起来"
+                    ],
+                    traits: ["计划型", "随性", "担忧型", "乐观"]
+                },
+                {
+                    question: "当你遇到挫折时，你的典型反应是：",
+                    options: [
+                        "分析失败原因，制定新的策略",
+                        "寻求朋友或家人的支持",
+                        "感到沮丧，需要时间恢复",
+                        "很快忘记，继续前进"
+                    ],
+                    traits: ["分析型", "社交型", "敏感型", "坚韧型"]
+                },
+                {
+                    question: "在团队中，你通常扮演什么角色？",
+                    options: [
+                        "领导者和决策者",
+                        "协调者和沟通者",
+                        "执行者和支持者",
+                        "独立思考者和创新者"
+                    ],
+                    traits: ["领导力", "协调力", "执行力", "创造力"]
+                },
+                {
+                    question: "你如何看待规则和传统？",
+                    options: [
+                        "严格遵守，认为它们很重要",
+                        "在必要时可以灵活变通",
+                        "质疑它们的合理性",
+                        "完全无视，走自己的路"
+                    ],
+                    traits: ["传统型", "灵活型", "质疑型", "反叛型"]
+                },
+                {
+                    question: "在空闲时间，你更喜欢：",
+                    options: [
+                        "独处，进行个人爱好",
+                        "与朋友或家人共度时光",
+                        "尝试新的活动和体验",
+                        "休息和放松，不做特定事情"
+                    ],
+                    traits: ["内向", "社交型", "冒险型", "放松型"]
+                },
+                {
+                    question: "当你做出重要决定时，主要依据是：",
+                    options: [
+                        "逻辑分析和客观事实",
+                        "内心感受和直觉",
+                        "他人的意见和建议",
+                        "一时冲动和当下情绪"
+                    ],
+                    traits: ["理性", "直觉型", "依赖型", "冲动型"]
+                },
+                {
+                    question: "你如何看待自己的过去？",
+                    options: [
+                        "从中学习经验教训",
+                        "怀念美好的时光",
+                        "有很多遗憾和后悔",
+                        "很少回想过去"
+                    ],
+                    traits: ["学习型", "怀旧型", "遗憾型", "向前看"]
+                }
+            ];
+            
+            let userAnswers = [];
+            let currentQuestion = 0;
+            
+            // 显示第一个问题
+            showQuestion(currentQuestion);
+            
+            function showQuestion(index) {
+                const q = questions[index];
+                
+                questionsContainer.innerHTML = '';
+                const questionEl = document.createElement('div');
+                questionEl.className = 'question-screen';
+                questionEl.innerHTML = `
+                    <div class="question-number">问题 ${index + 1}/${questions.length}</div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="options">
+                        ${q.options.map((opt, optIndex) => `
+                            <div class="option" data-question="${index}" data-option="${optIndex}">${opt}</div>
+                        `).join('')}
+                    </div>
+                `;
+                questionsContainer.appendChild(questionEl);
+                
+                // 更新进度条
+                progressBar.style.width = `${((index + 1) / questions.length) * 100}%`;
+                progressText.textContent = `${Math.round(((index + 1) / questions.length) * 100)}%`;
+                
+                // 添加选项点击事件
+                document.querySelectorAll('.option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        const questionIndex = parseInt(this.getAttribute('data-question'));
+                        const optionIndex = parseInt(this.getAttribute('data-option'));
+                        
+                        // 移除同一问题中其他选项的选中状态
+                        const options = document.querySelectorAll(`.option[data-question="${questionIndex}"]`);
+                        options.forEach(opt => opt.classList.remove('selected'));
+                        
+                        // 选中当前选项
+                        this.classList.add('selected');
+                        
+                        userAnswers[questionIndex] = {
+                            optionIndex: optionIndex,
+                            trait: questions[questionIndex].traits[optionIndex]
+                        };
+                        
+                        // 延迟显示下一题或结果
+                        setTimeout(() => {
+                            if (questionIndex < questions.length - 1) {
+                                showTransition("下一题", () => {
+                                    currentQuestion++;
+                                    showQuestion(currentQuestion);
+                                });
+                            } else {
+                                showTransition("生成结果中...", showResult, 1500);
+                            }
+                        }, 500);
+                    });
+                });
+            }
+            
+            function showResult() {
+                // 计算性格特质
+                const traitCounts = {};
+                userAnswers.forEach(answer => {
+                    const trait = answer.trait;
+                    traitCounts[trait] = (traitCounts[trait] || 0) + 1;
+                });
+                
+                // 找出主要特质
+                const mainTraits = Object.entries(traitCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 3)
+                    .map(item => item[0]);
+                
+                // 生成性格描述
+                let personalityType = "平衡型";
+                let description = "你是一个性格平衡的人，能够在不同情境下灵活调整自己的行为方式。";
+                let traits = ["适应性", "平衡性", "灵活性"];
+                
+                if (mainTraits.includes("外向") && mainTraits.includes("领导力")) {
+                    personalityType = "领导型人格";
+                    description = "你是一个天生的领导者，充满自信和决断力。你喜欢掌控局面，善于激励他人，在团队中常常扮演决策者的角色。你的外向性格使你容易与他人建立联系，而你的领导能力使你能够有效地组织和指导团队。";
+                    traits = ["领导力", "自信", "决断力", "社交能力"];
+                } else if (mainTraits.includes("内向") && mainTraits.includes("分析型")) {
+                    personalityType = "分析型人格";
+                    description = "你是一个深思熟虑的分析者，喜欢独自思考复杂问题。你注重细节，善于发现模式和规律，在需要逻辑思维和深度分析的任务中表现出色。你可能会花时间独自思考，但这使你能够提出独特的见解和解决方案。";
+                    traits = ["分析能力", "深思熟虑", "注重细节", "独立思考"];
+                } else if (mainTraits.includes("社交型") && mainTraits.includes("协调力")) {
+                    personalityType = "社交协调型人格";
+                    description = "你是一个出色的沟通者和协调者，善于理解他人需求并建立和谐的关系。你喜欢与人互动，能够敏锐地察觉群体动态，并帮助解决冲突。你的社交能力使你成为团队中不可或缺的粘合剂。";
+                    traits = ["社交能力", "协调力", "同理心", "沟通能力"];
+                } else if (mainTraits.includes("创造力") && mainTraits.includes("直觉型")) {
+                    personalityType = "创造型人格";
+                    description = "你是一个富有创造力和想象力的人，喜欢探索新想法和可能性。你倾向于依靠直觉而非逻辑，能够看到别人忽略的联系和模式。你的创新思维使你能够在艺术、设计或解决问题时提出独特的方法。";
+                    traits = ["创造力", "直觉", "想象力", "创新思维"];
+                }
+                
+                // 解锁成就
+                unlockAchievement('personality-test-complete');
+                
+                // 隐藏问题界面，显示结果界面
+                document.getElementById('personality-play').style.display = 'none';
+                resultContainer.style.display = 'block';
+                
+                resultContainer.innerHTML = `
+                    <h2 class="result-title">你的个性类型: ${personalityType}</h2>
+                    <p class="result-description">${description}</p>
+                    <p>基于你的回答，我们发现你具有以下特质：</p>
+                    <ul class="trait-list">
+                        ${traits.map(trait => `<li>${trait}</li>`).join('')}
+                    </ul>
+                    
+                    <div class="achievement-badge">
+                        <i class="fas fa-trophy"></i> 完成人格测试
+                    </div>
+                    
+                    <div class="button-group" style="margin-top: 20px;">
+                        <button class="game-button" onclick="showMainMenu()">返回主菜单</button>
+                        <button class="game-button secondary" onclick="restartPersonalityTest()">重新测试</button>
+                    </div>
+                `;
+            }
+            
+            // 重新开始测试
+            window.restartPersonalityTest = function() {
+                currentQuestion = 0;
+                userAnswers = [];
+                resultContainer.style.display = 'none';
+                document.getElementById('personality-play').style.display = 'block';
+                showQuestion(currentQuestion);
+            };
+        }
+        
+        // ========== 时间循环游戏 ==========
+        function initTimeLoop() {
+            const startBtn = document.getElementById('timeloop-start');
+            const submitBtn = document.getElementById('timeloop-submit');
+            const hintBtn = document.getElementById('timeloop-hint');
+            const answerInput = document.getElementById('puzzle-answer');
+            const puzzleQuestion = document.getElementById('puzzle-question');
+            const loopCount = document.getElementById('loop-count');
+            const puzzleProgress = document.getElementById('puzzle-progress');
+            const hintCount = document.getElementById('hint-count');
+            const hintRemaining = document.getElementById('hint-remaining');
+            const accuracyRate = document.getElementById('accuracy-rate');
+            const timerDisplay = document.getElementById('timeloop-timer');
+            
+            let loopNumber = 1;
+            let currentPuzzle = 0;
+            let puzzlesSolved = 0;
+            let totalAttempts = 0;
+            let correctAttempts = 0;
+            let hintsRemaining = 3;
+            let gameTimer;
+            let timeLeft = 120;
+            let difficulty = getDifficulty('timeloop');
+            let puzzles = [];
+            
+            // 根据难度设置谜题
+            if (difficulty === 'easy') {
+                puzzles = [
+                    {
+                        question: "什么东西越洗越脏？",
+                        answer: "水",
+                        hint: "它是生命之源"
+                    },
+                    {
+                        question: "什么东西打破了才能用？",
+                        answer: "鸡蛋",
+                        hint: "常见于早餐"
+                    },
+                    {
+                        question: "什么东西有头无脚？",
+                        answer: "钉子",
+                        hint: "常用于固定物体"
+                    },
+                    {
+                        question: "什么东西越热越爱出来？",
+                        answer: "汗",
+                        hint: "与身体温度调节有关"
+                    },
+                    {
+                        question: "什么东西人人都需要，但得到后却立刻想扔掉？",
+                        answer: "建议",
+                        hint: "别人给你的意见"
+                    }
+                ];
+            } else if (difficulty === 'medium') {
+                puzzles = [
+                    {
+                        question: "什么东西你永远无法留给别人，但可以轻易送给别人？",
+                        answer: "承诺",
+                        hint: "这是一种口头或书面的保证"
+                    },
+                    {
+                        question: "什么东西可以装满一个房间，但占据的空间却为零？",
+                        answer: "光",
+                        hint: "你看得见但摸不着"
+                    },
+                    {
+                        question: "什么东西越用越有钱？",
+                        answer: "存钱罐",
+                        hint: "与储蓄有关"
+                    },
+                    {
+                        question: "什么东西每个人都想要，但得到后又想失去？",
+                        answer: "体重",
+                        hint: "与身体健康有关"
+                    },
+                    {
+                        question: "什么东西你可以抓住，但不能触摸？",
+                        answer: "机会",
+                        hint: "这是一个抽象概念"
+                    },
+                    {
+                        question: "我有钥匙但没有锁，有空间但没有房间。我是什么？",
+                        answer: "键盘",
+                        hint: "与计算机有关"
+                    }
+                ];
+            } else { // hard
+                puzzles = [
+                    {
+                        question: "我有城市但没有房屋，有森林但没有树木，有河流但没有水。我是什么？",
+                        answer: "地图",
+                        hint: "用于导航"
+                    },
+                    {
+                        question: "我可以被打破，但从未被触摸或看见。我是什么？",
+                        answer: "承诺",
+                        hint: "一种无形的约定"
+                    },
+                    {
+                        question: "我总是在你前面，但你永远追不上我。我是什么？",
+                        answer: "未来",
+                        hint: "与时间有关"
+                    },
+                    {
+                        question: "我有舌头但不能说话，有床但不能睡觉。我是什么？",
+                        answer: "鞋子",
+                        hint: "穿在脚上"
+                    },
+                    {
+                        question: "我可以装满一个房间，但重量为零。我是什么？",
+                        answer: "光",
+                        hint: "你看得见但摸不着"
+                    },
+                    {
+                        question: "我越短，就越强大。我是什么？",
+                        answer: "密码",
+                        hint: "与安全有关"
+                    },
+                    {
+                        question: "我有手但不能鼓掌。我是什么？",
+                        answer: "时钟",
+                        hint: "告诉你时间"
+                    }
+                ];
+            }
+            
+            startBtn.addEventListener('click', startPuzzle);
+            submitBtn.addEventListener('click', checkAnswer);
+            hintBtn.addEventListener('click', showHint);
+            
+            function startPuzzle() {
+                startBtn.style.display = 'none';
+                answerInput.style.display = 'block';
+                submitBtn.style.display = 'inline-block';
+                hintBtn.style.display = 'inline-block';
+                
+                // 根据难度设置时间
+                if (difficulty === 'easy') timeLeft = 120;
+                else if (difficulty === 'medium') timeLeft = 100;
+                else timeLeft = 80;
+                
+                startTimer();
+                loadPuzzle();
+            }
+            
+            function startTimer() {
+                clearInterval(gameTimer);
+                gameTimer = setInterval(() => {
+                    timeLeft--;
+                    timerDisplay.textContent = `时间: ${timeLeft}秒`;
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(gameTimer);
+                        alert("时间到！循环重置...");
+                        resetTimeLoop();
+                    }
+                }, 1000);
+            }
+            
+            function loadPuzzle() {
+                currentPuzzle = Math.floor(Math.random() * puzzles.length);
+                puzzleQuestion.textContent = puzzles[currentPuzzle].question;
+                answerInput.value = '';
+                answerInput.focus();
+                
+                puzzleProgress.textContent = `${puzzlesSolved}/${puzzles.length}`;
+                hintRemaining.textContent = hintsRemaining;
+                
+                // 更新正确率
+                const accuracy = totalAttempts > 0 ? Math.round((correctAttempts / totalAttempts) * 100) : 0;
+                accuracyRate.textContent = `${accuracy}%`;
+            }
+            
+            function showHint() {
+                if (hintsRemaining <= 0) {
+                    alert("没有更多提示了！");
+                    return;
+                }
+                
+                hintsRemaining--;
+                hintCount.textContent = hintsRemaining;
+                hintRemaining.textContent = hintsRemaining;
+                alert(`提示: ${puzzles[currentPuzzle].hint}`);
+            }
+            
+            function checkAnswer() {
+                totalAttempts++;
+                const userAnswer = answerInput.value.trim().toLowerCase();
+                const correctAnswer = puzzles[currentPuzzle].answer.toLowerCase();
+                
+                if (userAnswer === correctAnswer) {
+                    correctAttempts++;
+                    puzzlesSolved++;
+                    puzzleProgress.textContent = `${puzzlesSolved}/${puzzles.length}`;
+                    
+                    // 解锁成就
+                    if (puzzlesSolved >= puzzles.length) {
+                        unlockAchievement('puzzle-master');
+                        if (difficulty === 'hard') unlockAchievement('puzzle-genius');
+                    }
+                    
+                    if (puzzlesSolved >= puzzles.length) {
+                        alert("恭喜！你打破了时间循环！");
+                        resetTimeLoop();
+                    } else {
+                        alert("正确！进入下一个谜题...");
+                        loadPuzzle();
+                    }
+                } else {
+                    alert("不对，再想想！");
+                }
+            }
+            
+            function resetTimeLoop() {
+                clearInterval(gameTimer);
+                startBtn.style.display = 'inline-block';
+                answerInput.style.display = 'none';
+                submitBtn.style.display = 'none';
+                hintBtn.style.display = 'none';
+                puzzleQuestion.textContent = "点击下面的按钮开始";
+                loopNumber = 1;
+                puzzlesSolved = 0;
+                totalAttempts = 0;
+                correctAttempts = 0;
+                hintsRemaining = 3;
+                loopCount.textContent = loopNumber;
+                puzzleProgress.textContent = `${puzzlesSolved}/${puzzles.length}`;
+                hintCount.textContent = hintsRemaining;
+                hintRemaining.textContent = hintsRemaining;
+                accuracyRate.textContent = "0%";
+                
+                // 根据难度设置时间
+                if (difficulty === 'easy') timeLeft = 120;
+                else if (difficulty === 'medium') timeLeft = 100;
+                else timeLeft = 80;
+                
+                timerDisplay.textContent = `时间: ${timeLeft}秒`;
+            }
+        }
+        
+        // ========== 选择困境游戏 ==========
+        function initDilemma() {
+            const scenarioContainer = document.getElementById('dilemma-scenario');
+            const resultContainer = document.getElementById('dilemma-result');
+            const moralScoreDisplay = document.getElementById('moral-score');
+            const scenarioProgress = document.getElementById('scenario-progress');
+            const influencePointsDisplay = document.getElementById('influence-points');
+            const decisionTimeDisplay = document.getElementById('decision-time');
+            const progressBar = document.getElementById('moral-progress');
+            const progressText = document.getElementById('moral-progress-text');
+            
+            let currentScenario = 0;
+            let moralScore = 50;
+            let influencePoints = 0;
+            let decisionStartTime;
+            
+            const scenarios = [
+                {
+                    scenario: "你在街上发现一个钱包，里面有一定数量的现金和身份证。你会：",
+                    choices: [
+                        { text: "把钱包交给警察局", score: 10, influence: 2 },
+                        { text: "尝试联系失主", score: 5, influence: 3 },
+                        { text: "拿走现金，扔掉钱包", score: -15, influence: -5 },
+                        { text: "保留钱包和现金", score: -10, influence: -3 }
+                    ]
+                },
+                {
+                    scenario: "你的朋友在考试中作弊，并向你炫耀。你会：",
+                    choices: [
+                        { text: "报告给老师", score: -5, influence: -2 },
+                        { text: "劝告朋友不要作弊", score: 5, influence: 1 },
+                        { text: "不予理会", score: 0, influence: 0 },
+                        { text: "自己也尝试作弊", score: -10, influence: -3 }
+                    ]
+                },
+                {
+                    scenario: "你在工作中发现同事经常早退，但老板问你时，你会：",
+                    choices: [
+                        { text: "如实告知老板", score: -5, influence: -3 },
+                        { text: "为同事掩护", score: -3, influence: 2 },
+                        { text: "先与同事沟通", score: 5, influence: 1 },
+                        { text: "假装不知道", score: 0, influence: 0 }
+                    ]
+                },
+                {
+                    scenario: "你发现你的伴侣在对你撒谎，但谎言并不严重。你会：",
+                    choices: [
+                        { text: "直接质问并要求解释", score: -3, influence: -2 },
+                        { text: "暂时不提，但留意更多证据", score: 2, influence: 0 },
+                        { text: "完全忽视，认为每个人都有小秘密", score: 0, influence: 1 },
+                        { text: "以同样的方式回应，测试对方的反应", score: -8, influence: -4 }
+                    ]
+                },
+                {
+                    scenario: "你无意中听到了同事的私人谈话，内容对你有利。你会：",
+                    choices: [
+                        { text: "立即利用这些信息", score: -10, influence: -5 },
+                        { text: "保守秘密，但必要时使用", score: -3, influence: -1 },
+                        { text: "完全忽略，当作没听到", score: 5, influence: 2 },
+                        { text: "告诉同事你听到了谈话", score: 8, influence: 3 }
+                    ]
+                },
+                {
+                    scenario: "你的家人要求你做一个你非常反对的道德决定。你会：",
+                    choices: [
+                        { text: "坚持自己的原则，拒绝妥协", score: 5, influence: -2 },
+                        { text: "妥协以维持家庭和谐", score: -5, influence: 3 },
+                        { text: "寻求第三方的建议", score: 3, influence: 1 },
+                        { text: "拖延决定，希望问题自行解决", score: -2, influence: 0 }
+                    ]
+                },
+                {
+                    scenario: "你发现了一个可以让你获利但会伤害他人的方法。你会：",
+                    choices: [
+                        { text: "毫不犹豫地利用这个方法", score: -15, influence: -5 },
+                        { text: "仔细权衡利弊后决定", score: 0, influence: 0 },
+                        { text: "寻找双赢的替代方案", score: 10, influence: 3 },
+                        { text: "完全拒绝，即使对自己不利", score: 8, influence: 5 }
+                    ]
+                }
+            ];
+            
+            // 显示第一个场景
+            showScenario();
+            
+            function showScenario() {
+                const scenario = scenarios[currentScenario];
+                
+                scenarioContainer.innerHTML = '';
+                const scenarioEl = document.createElement('div');
+                scenarioEl.className = 'dilemma-screen';
+                scenarioEl.innerHTML = `
+                    <div class="scenario-title">困境 ${currentScenario + 1}/${scenarios.length}</div>
+                    <div class="scenario-text">${scenario.scenario}</div>
+                    <div class="moral-choices">
+                        ${scenario.choices.map((choice, index) => `
+                            <div class="moral-choice" data-score="${choice.score}" data-influence="${choice.influence}">${choice.text}</div>
+                        `).join('')}
+                    </div>
+                    <div class="consequence" id="consequence">
+                        <!-- 后果将通过JavaScript动态生成 -->
+                    </div>
+                `;
+                scenarioContainer.appendChild(scenarioEl);
+                
+                // 更新进度
+                scenarioProgress.textContent = `${currentScenario + 1}/${scenarios.length}`;
+                
+                // 开始计时
+                decisionStartTime = new Date();
+                
+                // 添加选择点击事件
+                document.querySelectorAll('.moral-choice').forEach(choice => {
+                    choice.addEventListener('click', function() {
+                        const score = parseInt(this.getAttribute('data-score'));
+                        const influence = parseInt(this.getAttribute('data-influence'));
+                        
+                        // 计算决策时间
+                        const decisionTime = Math.round((new Date() - decisionStartTime) / 1000);
+                        decisionTimeDisplay.textContent = `${decisionTime}s`;
+                        
+                        makeChoice(score, influence);
+                    });
+                });
+            }
+            
+            function makeChoice(score, influence) {
+                moralScore += score;
+                influencePoints += influence;
+                
+                if (moralScore > 100) moralScore = 100;
+                if (moralScore < 0) moralScore = 0;
+                
+                moralScoreDisplay.textContent = moralScore;
+                influencePointsDisplay.textContent = influencePoints;
+                progressBar.style.width = `${moralScore}%`;
+                progressText.textContent = `${moralScore}%`;
+                
+                // 显示后果
+                let consequenceText = "";
+                if (score > 0) {
+                    consequenceText = "你的选择体现了良好的道德判断。";
+                } else if (score < 0) {
+                    consequenceText = "你的选择可能会带来负面后果。";
+                } else {
+                    consequenceText = "你的选择是中立的，没有明显的道德倾向。";
+                }
+                
+                document.getElementById('consequence').innerHTML = `<p>${consequenceText}</p>`;
+                document.getElementById('consequence').style.display = 'block';
+                
+                // 延迟显示下一题或结果
+                setTimeout(() => {
+                    currentScenario++;
+                    if (currentScenario < scenarios.length) {
+                        showTransition("下一题", () => {
+                            showScenario();
+                        });
+                    } else {
+                        showTransition("生成结果中...", showDilemmaResult, 1500);
+                    }
+                }, 1500);
+            }
+            
+            function showDilemmaResult() {
+                // 解锁成就
+                unlockAchievement('moral-compass');
+                if (moralScore >= 80) unlockAchievement('moral-exemplar');
+                
+                // 隐藏问题界面，显示结果界面
+                document.getElementById('dilemma-play').style.display = 'none';
+                resultContainer.style.display = 'block';
+                
+                let judgment = "";
+                let description = "";
+                
+                if (moralScore >= 80) {
+                    judgment = "道德楷模";
+                    description = "你展现了极高的道德标准和坚定的道德立场。你的选择始终考虑他人的福祉和社会责任，体现了高尚的道德品质。";
+                } else if (moralScore >= 60) {
+                    judgment = "道德良好";
+                    description = "你有着良好的道德判断力，在大多数情况下能做出符合道德标准的选择。你考虑他人的感受，但也懂得保护自己的利益。";
+                } else if (moralScore >= 40) {
+                    judgment = "道德一般";
+                    description = "你的道德立场相对灵活，有时会优先考虑个人利益。你在道德困境中可能会感到矛盾，需要在个人利益和道德责任之间寻找平衡。";
+                } else {
+                    judgment = "有待提高";
+                    description = "你的道德判断倾向于优先考虑个人利益。建议你多考虑选择的长期后果和对他人可能产生的影响，以培养更强的道德意识。";
+                }
+                
+                let influenceJudgment = "";
+                if (influencePoints >= 10) influenceJudgment = "高度影响力";
+                else if (influencePoints >= 5) influenceJudgment = "中等影响力";
+                else if (influencePoints >= 0) influenceJudgment = "有限影响力";
+                else influenceJudgment = "负面影响力";
+                
+                resultContainer.innerHTML = `
+                    <h2 class="result-title">道德测试结果</h2>
+                    <p class="result-description">你的最终道德分数: ${moralScore}/100</p>
+                    <p class="result-description">道德评价: ${judgment}</p>
+                    <p class="result-description">${description}</p>
+                    <p class="result-description">你的影响点数: ${influencePoints}</p>
+                    <p class="result-description">影响力评价: ${influenceJudgment}</p>
+                    
+                    <div class="achievement-badge">
+                        <i class="fas fa-balance-scale"></i> 完成道德测试
+                    </div>
+                    
+                    <div class="button-group" style="margin-top: 20px;">
+                        <button class="game-button" onclick="showMainMenu()">返回主菜单</button>
+                        <button class="game-button secondary" onclick="restartDilemma()">重新测试</button>
+                    </div>
+                `;
+            }
+            
+            // 重新开始测试
+            window.restartDilemma = function() {
+                currentScenario = 0;
+                moralScore = 50;
+                influencePoints = 0;
+                moralScoreDisplay.textContent = moralScore;
+                influencePointsDisplay.textContent = influencePoints;
+                decisionTimeDisplay.textContent = '0s';
+                progressBar.style.width = '50%';
+                progressText.textContent = '50%';
+                resultContainer.style.display = 'none';
+                document.getElementById('dilemma-play').style.display = 'block';
+                showScenario();
+            };
+        }
+        
+        // ========== 成就系统 ==========
+        const achievements = {
+            'memory-master': {
+                title: '记忆大师',
+                description: '在记忆游戏中达到5级',
+                icon: 'fa-brain',
+                unlocked: false
+            },
+            'memory-expert': {
+                title: '记忆专家',
+                description: '在记忆游戏中达到10级',
+                icon: 'fa-brain',
+                unlocked: false
+            },
+            'memory-pro': {
+                title: '记忆高手',
+                description: '在记忆游戏中获得500分',
+                icon: 'fa-brain',
+                unlocked: false
+            },
+            'combo-king': {
+                title: '连击之王',
+                description: '在记忆游戏中达到5连击',
+                icon: 'fa-bolt',
+                unlocked: false
+            },
+            'personality-test-complete': {
+                title: '了解自我',
+                description: '完成人格测试',
+                icon: 'fa-user',
+                unlocked: false
+            },
+            'puzzle-master': {
+                title: '解谜高手',
+                description: '完成时间循环游戏',
+                icon: 'fa-puzzle-piece',
+                unlocked: false
+            },
+            'puzzle-genius': {
+                title: '解谜天才',
+                description: '在困难模式下完成时间循环游戏',
+                icon: 'fa-puzzle-piece',
+                unlocked: false
+            },
+            'moral-compass': {
+                title: '道德指南针',
+                description: '完成道德困境测试',
+                icon: 'fa-compass',
+                unlocked: false
+            },
+            'moral-exemplar': {
+                title: '道德典范',
+                description: '在道德测试中获得80分以上',
+                icon: 'fa-award',
+                unlocked: false
+            },
+            'first-game': {
+                title: '初次尝试',
+                description: '完成任意一个游戏',
+                icon: 'fa-gamepad',
+                unlocked: false
+            }
+        };
+        
+        // 解锁成就
+        function unlockAchievement(id) {
+            if (achievements[id] && !achievements[id].unlocked) {
+                achievements[id].unlocked = true;
+                localStorage.setItem(`achievement-${id}`, 'true');
+                
+                // 显示成就通知
+                showAchievementNotification(id);
+            }
+        }
+        
+        // 显示成就通知
+        function showAchievementNotification(id) {
+            const achievement = achievements[id];
+            const notification = document.createElement('div');
+            notification.className = 'achievement-item fade-in';
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.zIndex = '1000';
+            notification.style.maxWidth = '300px';
+            notification.innerHTML = `
+                <div class="achievement-icon">
+                    <i class="fas ${achievement.icon}"></i>
+                </div>
+                <div class="achievement-info">
+                    <div class="achievement-title">${achievement.title}</div>
+                    <div class="achievement-description">${achievement.description}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // 3秒后移除通知
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // 更新成就预览
+        function updateAchievementsPreview() {
+            const container = document.getElementById('achievements-preview');
+            container.innerHTML = '';
+            
+            // 获取已解锁的成就
+            const unlockedAchievements = Object.entries(achievements)
+                .filter(([id, achievement]) => achievement.unlocked)
+                .slice(0, 3); // 只显示前3个
+            
+            if (unlockedAchievements.length === 0) {
+                container.innerHTML = '<p>还没有解锁任何成就。玩游戏来解锁成就吧！</p>';
+                return;
+            }
+            
+            unlockedAchievements.forEach(([id, achievement]) => {
+                const item = document.createElement('div');
+                item.className = 'achievement-item';
+                item.innerHTML = `
+                    <div class="achievement-icon">
+                        <i class="fas ${achievement.icon}"></i>
+                    </div>
+                    <div class="achievement-info">
+                        <div class="achievement-title">${achievement.title}</div>
+                        <div class="achievement-description">${achievement.description}</div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+        
+        // 加载已解锁的成就
+        function loadAchievements() {
+            Object.keys(achievements).forEach(id => {
+                if (localStorage.getItem(`achievement-${id}`) === 'true') {
+                    achievements[id].unlocked = true;
+                }
+            });
+        }
+        
+        // ========== 排行榜系统 ==========
+        function updateHighScore(game, score) {
+            const highScores = JSON.parse(localStorage.getItem(`${game}-highScores`) || '[]');
+            highScores.push({
+                score: score,
+                date: new Date().toLocaleDateString()
+            });
+            
+            // 排序并保留前5名
+            highScores.sort((a, b) => b.score - a.score);
+            if (highScores.length > 5) {
+                highScores.splice(5);
+            }
+            
+            localStorage.setItem(`${game}-highScores`, JSON.stringify(highScores));
+        }
+        
+        // 初始化
+        loadAchievements();
+        updateAchievementsPreview();
+    </script>
+</body>
+</html>
